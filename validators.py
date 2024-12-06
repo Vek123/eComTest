@@ -12,13 +12,13 @@ class Validator(object):
         raise NotImplementedError()
 
 
-class SizedValidator(Validator):
+class PriorityValidator(Validator):
     @staticmethod
-    def get_size() -> int:
+    def get_priority() -> int:
         raise NotImplementedError()
 
 
-class PhoneValidator(SizedValidator):
+class PhoneValidator(PriorityValidator):
     def __new__(cls, phone: str):
         return super().__new__(cls, phone)
 
@@ -27,11 +27,11 @@ class PhoneValidator(SizedValidator):
         return re.fullmatch(r"\+7 \d{3} \d{3} \d{2} \d{2}", phone) is not None
 
     @staticmethod
-    def get_size() -> int:
+    def get_priority() -> int:
         return 3
 
 
-class EmailValidator(SizedValidator):
+class EmailValidator(PriorityValidator):
     def __new__(cls, email: str):
         return super().__new__(cls, email)
 
@@ -40,11 +40,11 @@ class EmailValidator(SizedValidator):
         return re.fullmatch(r".+@.+\..+", email)
 
     @staticmethod
-    def get_size() -> int:
+    def get_priority() -> int:
         return 4
 
 
-class DateValidator(SizedValidator):
+class DateValidator(PriorityValidator):
     date_formats: List[str] = [
         "%d.%m.%Y",
         "%Y-%m-%d",
@@ -65,11 +65,11 @@ class DateValidator(SizedValidator):
         return valid_date
 
     @staticmethod
-    def get_size() -> int:
+    def get_priority() -> int:
         return 2
 
 
-def get_validator(field_type: str) -> Type[SizedValidator]:
+def get_validator(field_type: str) -> Type[PriorityValidator]:
     match field_type:
         case "email":
             return EmailValidator

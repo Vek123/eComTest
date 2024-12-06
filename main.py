@@ -28,13 +28,13 @@ async def get_form(request: Request):
         except ValueError:
             raise HTTPException(422, "Form is not valid")
         fields[name] = value
-    existed_schema = {"size": 0, "count": 0, "name": None}
+    existed_schema = {"priority": 0, "count": 0, "name": None}
     form_keys = set(fields.keys())
     for schema in form_schemas:
         schema_keys = set([key for key in schema.keys() if key != "name"])
         intersection = schema_keys.intersection(form_keys)
         if intersection == schema_keys:
-            fields_size = 0
+            fields_priority = 0
             for field, field_type in schema.items():
                 if field == "name":
                     continue
@@ -44,11 +44,11 @@ async def get_form(request: Request):
                 validator = get_validator(field_type)
                 if not get_validator(field_type)(value):
                     break
-                fields_size += validator.get_size()
+                fields_priority += validator.get_priority()
             else:
-                if existed_schema["count"] <= len(intersection) and existed_schema["size"] <= fields_size:
+                if existed_schema["count"] <= len(intersection) and existed_schema["priority"] <= fields_priority:
                     existed_schema["count"] = len(intersection)
-                    existed_schema["size"] = fields_size
+                    existed_schema["priority"] = fields_priority
                     existed_schema["name"] = schema["name"]
 
     if not existed_schema["name"]:
