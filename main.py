@@ -42,7 +42,7 @@ async def get_form(request: Request):
                 if field_type == "text":
                     continue
                 validator = get_validator(field_type)
-                if not get_validator(field_type)(value):
+                if not validator(value):
                     break
                 fields_priority += validator.get_priority()
             else:
